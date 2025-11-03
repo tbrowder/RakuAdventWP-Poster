@@ -1,0 +1,25 @@
+{
+  "auth": "zef:tbrowder",
+  "authors": [
+    "Tom Browder"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "An aid for creating and posting articles to the 'RakuAdvent.blog' Wordpress site.\n",
+  "license": "Artistic-2.0",
+  "name": "RakuAdventWP-Poster",
+  "perl": "6.d",
+  "provides": {
+    "RakuAdventWP-Poster": "lib/RakuAdventWP-Poster.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "",
+  "tags": [
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}

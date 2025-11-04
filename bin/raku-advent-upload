@@ -1,0 +1,135 @@
+#!/usr/bin/env raku
+# Upload an HTML fragment as a WordPress post.
+#
+# CREDENTIAL CHECKLIST (raku-advent.blog):
+# 1) You must have a WordPress user account on the site.
+# 2) Your role must be Author (or higher) to create posts.
+# 3) Create an Application Password in your WP Profile and use it below.
+# 4) Do NOT commit your app password; prefer env var RAKU_ADVENT_APP_PASS.
+#
+# Config order: CLI > ENV > ~/.config/raku-advent/config.json
+#
+use v6.d;
+use RakuAdventWP::Poster :upload, :load-config;
+
+sub USAGE {
+    say q:to/HELP/;
+Usage:
+  raku-advent-upload
+    --title "Post Title"
+    [--content-file file.html]        # else read STDIN
+    [--status draft|publish|future]   # default: draft
+    [--slug my-slug]
+    [--excerpt "Short summary"]
+    [--sticky yes|no]
+
+    # Taxonomies (mixable)
+    [--cats "12,34"]                  # numeric IDs
+    [--tags "56,78"]
+    [--cat-names "Advent, Raku"]      # names; auto-create by default
+    [--tag-names "Tutorial, 2025"]
+    [--create-tax yes|no]             # default yes
+
+    # Featured image
+    [--featured path/to/img.png]
+    [--featured-alt "Alt text"]
+
+    # Author
+    [--author-id 7]
+    [--author-name "Jane Doe"]
+    [--author-login "janed"]
+    [--author-email "jane@example.com"]
+
+    # Scheduling
+    [--date "YYYY-MM-DD HH:MM"]       # site local time
+    [--date-gmt "YYYY-MM-DD HH:MM"]   # UTC
+
+    # Optional config overrides
+    [--site https://example.com]
+    [--user you@example.com]
+    [--app-pass "APP PASSWORD"]
+HELP
+    exit 1;
+}
+
+# Parse --key value pairs
+my %opt;
+for @*ARGS.rotor(2, :partial).grep(*.elems == 2) -> [$k,$v] {
+    if $k ~~ /^ '--' <-[=]>+ $/ {
+        %opt{$k} = $v;
+    }
+}
+
+my %cfg = load-config(
+    site       => %opt{'--site'},
+    user       => %opt{'--user'},
+    'app-pass' => %opt{'--app-pass'},
+);
+
+my $site     = %cfg<site>     // USAGE();
+my $user     = %cfg<user>     // USAGE();
+my $app-pass = %cfg<app-pass> // USAGE();
+
+my $title   = %opt{'--title'} // USAGE();
+my $status  = %opt{'--status'} // 'draft';
+my $slug    = %opt{'--slug'} // Nil;
+my $excerpt = %opt{'--excerpt'} // Nil;
+my $sticky  = (%opt{'--sticky'} // 'no').lc eq 'yes';
+
+# Taxonomies from CLI
+my $cats       = %opt{'--cats'} // Nil;
+my $tags       = %opt{'--tags'} // Nil;
+my $cat-names  = %opt{'--cat-names'} // Nil;
+my $tag-names  = %opt{'--tag-names'} // Nil;
+my $create-tax = (%opt{'--create-tax'} // 'yes').lc eq 'yes';
+
+# Fallback to defaults from config
+if (!$cats && !$cat-names && %cfg<default-cats> && %cfg<default-cats>.chars) {
+    $cat-names = %cfg<default-cats>;
+}
+if (!$tags && !$tag-names && %cfg<default-tags> && %cfg<default-tags>.chars) {
+    $tag-names = %cfg<default-tags>;
+}
+
+my $featured     = %opt{'--featured'} // Nil;
+my $featured-alt = %opt{'--featured-alt'} // Nil;
+
+my $author-id    = %opt{'--author-id'} // Nil;
+my $author-name  = %opt{'--author-name'} // Nil;
+my $author-login = %opt{'--author-login'} // Nil;
+my $author-email = %opt{'--author-email'} // Nil;
+
+my $date     = %opt{'--date'} // Nil;
+my $date-gmt = %opt{'--date-gmt'} // Nil;
+
+my $content-file = %opt{'--content-file'} // Nil;
+my $content = $content-file.defined ?? slurp($content-file) !! $*IN.lines.join("\n");
+die "No content (empty file/STDIN)\n" unless $content.defined and $content.chars;
+
+my %res = upload(
+    site         => $site,
+    user         => $user,
+    'app-pass'   => $app-pass,
+    title        => $title,
+    content      => $content,
+    status       => $status,
+    slug         => $slug,
+    excerpt      => $excerpt,
+    sticky       => $sticky,
+    cats         => $cats,
+    tags         => $tags,
+    'cat-names'  => $cat-names,
+    'tag-names'  => $tag-names,
+    'create-tax' => $create-tax,
+    featured     => $featured,
+    'featured-alt' => $featured-alt // '',
+    'author-id'    => $author-id,
+    'author-name'  => $author-name,
+    'author-login' => $author-login,
+    'author-email' => $author-email,
+    date         => $date,
+    'date-gmt'   => $date-gmt,
+);
+
+say "OK: Post ID {%res<id> // '?'} status {%res<status> // '?'}";
+say "Link: {%res<link>}" if %res<link>:exists;

@@ -1,23 +1,37 @@
 {
   "auth": "zef:tbrowder",
   "authors": [
-    "Tom Browder"
+    "Thomas Browder"
   ],
   "build-depends": [
   ],
   "depends": [
+    "HTTP::UserAgent",
+    "JSON::Fast",
+    "MIME::Base64",
+    "Pod::To::HTML"
   ],
-  "description": "An aid for creating and posting articles to the 'RakuAdvent.blog' Wordpress site.\n",
+  "description": "Convert Rakudoc (Pod6) and upload to WordPress (Raku Advent friendly).",
   "license": "Artistic-2.0",
   "name": "RakuAdventWP-Poster",
-  "perl": "6.d",
+  "perl": "6d",
   "provides": {
     "RakuAdventWP-Poster": "lib/RakuAdventWP-Poster.rakumod"
   },
   "resources": [
+    "resources/config-sample.json"
   ],
-  "source-url": "",
+  "script": [
+    "bin/raku-advent-convert",
+    "bin/raku-advent-upload",
+    "bin/raku-advent-post"
+  ],
+  "source-url": "https://github.com/tbrowder/RakuAdventWP-Poster.git",
   "tags": [
+    "WordPress",
+    "Raku",
+    "Pod6",
+    "Advent"
   ],
   "test-depends": [
   ],

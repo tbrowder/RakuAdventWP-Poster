@@ -1,0 +1,27 @@
+#!/usr/bin/env raku
+# Convert a .rakudoc (Pod6) file to HTML for WordPress (fragment only).
+use v6.d;
+use RakuAdventWP::Poster :convert-rakudoc-to-html;
+
+sub USAGE {
+    say "Usage: raku-advent-convert INPUT.rakudoc [--out OUTPUT.html]";
+    exit 1;
+}
+
+my $in  = @*ARGS[0] // USAGE();
+my $out = do {
+    my $p = @*ARGS.first-index(* eq '--out');
+    $p.defined and @*ARGS[$p+1]:exists ?? @*ARGS[$p+1] !! Nil
+};
+
+my $raw = try slurp $in;
+die "Cannot read $in\n" unless $raw.defined;
+
+my $html = convert-rakudoc-to-html($raw);
+
+if $out.defined {
+    spurt $out, $html;
+    say "Wrote $out";
+} else {
+    say $html;
+}

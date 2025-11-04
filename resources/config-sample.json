@@ -1,0 +1,7 @@
+{
+  "site": "https://raku-advent.blog",
+  "user": "you@example.com",
+  "app-pass": "abcd abcd abcd abcd",
+  "default-cats": "Raku Advent 2025",
+  "default-tags": "Raku, Advent"
+}

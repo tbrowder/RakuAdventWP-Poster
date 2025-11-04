@@ -4,7 +4,7 @@
 
 =head1 Synopsis
 
-=code
+=begin code
 # Convert Pod6 to HTML
 raku-advent-convert article.rakudoc --out article.html
 
@@ -15,17 +15,18 @@ raku-advent-upload --title "Day N: Great Raku Post" --content-file article.html 
 # One-shot convert + upload
 raku-advent-post --in article.rakudoc --title "Day N: Great Raku Post" \
   --status draft
+=end code
 
 =head1 Features
 
-* Clean HTML from .rakudoc (Pod6) for Gutenberg
-* WordPress REST API upload with Application Passwords
-* Category/Tag by name (auto-create optional) or by ID
-* Featured image upload (+ alt text)
-* Author by id/name/login/email
-* Scheduling via local C<--date> or UTC C<--date-gmt>
-* XDG config + env var overrides, CLI wins
-* One-shot CLI: C<raku-advent-post>
+=item Clean HTML from .rakudoc (Pod6) for Gutenberg
+=item WordPress REST API upload with Application Passwords
+=item Category/Tag by name (auto-create optional) or by ID
+=item Featured image upload (+ alt text)
+=item Author by id/name/login/email
+=item Scheduling via local C<--date> or UTC C<--date-gmt>
+=item XDG config + env var overrides, CLI wins
+=item One-shot CLI: C<raku-advent-post>
 
 =head1 Install
 
@@ -57,9 +58,13 @@ export RAKU_ADVENT_TAGS="Raku, Advent"
 =head1 Credential checklist (raku-advent.blog)
 
 1. You have a WordPress user on the site.
+
 2. Your role is Author or higher.
+
 3. In your WP profile, create an Application Password (copy it once).
+
 4. Prefer env var C<RAKU_ADVENT_APP_PASS> to avoid secrets in the file.
+
 5. Revoke the app password any time in your profile.
 
 =head1 Usage
@@ -99,15 +104,15 @@ are applied (C<default-cats>, C<default-tags>).
 
 =head1 Notes
 
-* If both C<--date-gmt> and C<--date> are provided, C<--date-gmt> wins.
-* Without author flags, WordPress uses the credentialed user.
-* If tax names don’t exist and C<--create-tax yes> (default), they are created.
+=item If both C<--date-gmt> and C<--date> are provided, C<--date-gmt> wins.
+=item Without author flags, WordPress uses the credentialed user.
+=item If tax names don’t exist and C<--create-tax yes> (default), they are created.
 
 =head1 Development
 
-* Testing: C<zef test .>
-* Code style: 4-space indent, no cuddled else/elsif, boolean words C<and>/<or>.
-* PRs welcome.
+=item Testing: C<zef test .>
+=item Code style: 4-space indent, no cuddled else/elsif, boolean words C<and>/<or>.
+=item PRs welcome.
 
 =head1 License
 
